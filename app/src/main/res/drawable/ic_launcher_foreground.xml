@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Tela da TV -->
+    <path
+        android:pathData="M36,35h36a6,6 0,0 1,6 6v24a6,6 0,0 1,-6 6h-36a6,6 0,0 1,-6 -6v-24a6,6 0,0 1,6 -6z"
+        android:fillColor="#FF1C1C1E"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5" />
+    <!-- Pé da TV -->
+    <path
+        android:pathData="M45,77.5h18"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round" />
+    <!-- Onda do toque -->
+    <path
+        android:pathData="M54,44a9,9 0,1 1,0 18a9,9 0,1 1,0 -18z"
+        android:strokeColor="#73FFFFFF"
+        android:strokeWidth="2" />
+    <!-- Ponto do toque -->
+    <path
+        android:pathData="M54,49a4,4 0,1 1,0 8a4,4 0,1 1,0 -8z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

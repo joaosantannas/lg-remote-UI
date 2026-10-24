@@ -76,7 +76,6 @@ fun TextPrefence(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
@@ -85,6 +84,7 @@ fun TextPrefence(
                     showDialog = true
                 },
             )
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         val titleColor = if (onValueChange != null) {
             MaterialTheme.colorScheme.onSurface

@@ -54,7 +54,17 @@ import com.github.heroslender.lgtvcontroller.R
 import com.github.heroslender.lgtvcontroller.R.string
 import com.github.heroslender.lgtvcontroller.device.DeviceStatus
 import com.github.heroslender.lgtvcontroller.ui.ConnectedDeviceScaffold
-import com.github.heroslender.lgtvcontroller.ui.controller.CButton
+import com.github.heroslender.lgtvcontroller.ui.theme.AppColors
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import com.github.heroslender.lgtvcontroller.ui.theme.LGTVControllerTheme
 import kotlin.math.min
 import kotlin.math.pow
@@ -177,28 +187,35 @@ fun NoDevices(
             .padding(32.dp)
     ) {
         with(sharedTransitionScope) {
+            Sonar(
+                Modifier
+                    .padding(horizontal = 48.dp)
+                    .sharedElement(
+                        rememberSharedContentState(key = "sonar"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+            )
+            Spacer(Modifier.height(32.dp))
             Text(
                 text = stringResource(string.searching_devices),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineSmall,
+                color = AppColors.Content,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .sharedBounds(
                         rememberSharedContentState(key = "txt_h1"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             )
+            Spacer(Modifier.height(6.dp))
             Text(
                 text = stringResource(string.check_network),
-                style = MaterialTheme.typography.bodyMedium, modifier = Modifier
+                style = MaterialTheme.typography.bodyMedium,
+                color = AppColors.ContentSecondary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
                     .sharedBounds(
                         rememberSharedContentState(key = "txt_h2"),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    )
-            )
-            Sonar(
-                Modifier
-                    .padding(horizontal = 32.dp)
-                    .sharedElement(
-                        rememberSharedContentState(key = "sonar"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             )
@@ -216,19 +233,41 @@ fun HasDevices(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp, vertical = 16.dp)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
+        // Título grande
+        Text(
+            text = stringResource(string.device_list_title),
+            style = MaterialTheme.typography.headlineLarge,
+            color = AppColors.Content,
+            modifier = Modifier.padding(top = 24.dp, bottom = 20.dp),
+        )
+
         Row(
             Modifier
-                .padding(top = 16.dp)
+                .padding(bottom = 12.dp, start = 4.dp)
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
             with(sharedTransitionScope) {
-                Column(Modifier.weight(1F)) {
+                Sonar(
+                    Modifier
+                        .size(20.dp)
+                        .sharedElement(
+                            rememberSharedContentState(key = "sonar"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                )
+                Column(
+                    Modifier
+                        .weight(1F)
+                        .padding(start = 10.dp)
+                ) {
                     Text(
-                        text = stringResource(string.searching_devices),
-                        style = MaterialTheme.typography.titleMedium,
+                        text = stringResource(string.searching_devices).uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = AppColors.ContentSecondary,
                         modifier = Modifier
                             .sharedBounds(
                                 rememberSharedContentState(key = "txt_h1"),
@@ -238,6 +277,7 @@ fun HasDevices(
                     Text(
                         text = stringResource(string.check_network),
                         style = MaterialTheme.typography.bodySmall,
+                        color = AppColors.ContentTertiary,
                         modifier = Modifier
                             .sharedBounds(
                                 rememberSharedContentState(key = "txt_h2"),
@@ -245,37 +285,44 @@ fun HasDevices(
                             )
                     )
                 }
-
-                Sonar(
-                    Modifier
-                        .size(64.dp)
-                        .sharedElement(
-                            rememberSharedContentState(key = "sonar"),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                )
             }
         }
 
-        devices.sortedWith { device1, device2 ->
-            return@sortedWith when {
-                !device1.isPoweredOn -> 1
-                !device2.isPoweredOn -> -1
-                device1.status.value == DeviceStatus.CONNECTED -> -1
-                device2.status.value == DeviceStatus.CONNECTED -> 1
-                else -> 0
+        // Lista agrupada em um único bloco arredondado
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .background(AppColors.Surface)
+        ) {
+            val sorted = devices.sortedWith { device1, device2 ->
+                return@sortedWith when {
+                    !device1.isPoweredOn -> 1
+                    !device2.isPoweredOn -> -1
+                    device1.status.value == DeviceStatus.CONNECTED -> -1
+                    device2.status.value == DeviceStatus.CONNECTED -> 1
+                    else -> 0
+                }
             }
-        }.forEach {
-            DeviceItem(it, navigateToController)
+            sorted.forEachIndexed { index, device ->
+                DeviceItem(device, navigateToController)
+                if (index < sorted.lastIndex) {
+                    HorizontalDivider(
+                        color = AppColors.Separator,
+                        thickness = 0.5.dp,
+                        modifier = Modifier.padding(start = 72.dp),
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun onlineTVColor() = Color.Green
+fun onlineTVColor() = AppColors.Green
 
 @Composable
-fun offlineTVColor() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+fun offlineTVColor() = AppColors.ContentTertiary
 
 @Composable
 fun DeviceItem(
@@ -283,43 +330,81 @@ fun DeviceItem(
     navigateToController: () -> Unit,
 ) {
     val status by deviceData.status
+    val (statusText, statusColor) = when {
+        !deviceData.isPoweredOn ->
+            stringResource(string.device_list_offline) to AppColors.ContentTertiary
+        status == DeviceStatus.CONNECTED ->
+            stringResource(string.device_list_connected) to AppColors.Green
+        status == DeviceStatus.CONNECTING || status == DeviceStatus.PAIRING ->
+            stringResource(status.nameResId) to AppColors.Yellow
+        else ->
+            stringResource(string.device_list_disconnected) to AppColors.ContentSecondary
+    }
 
-    CButton(
-        onClick = {
-            if (status == DeviceStatus.DISCONNECTED) {
-                deviceData.connect()
-            }
-            navigateToController()
-        },
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp),
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp)
+            .clickable {
+                if (status == DeviceStatus.DISCONNECTED) {
+                    deviceData.connect()
+                }
+                navigateToController()
+            }
+            .alpha(if (deviceData.isPoweredOn) 1f else 0.55f)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(AppColors.SurfaceHigh),
+        ) {
             Icon(
                 painterResource(
                     if (status != DeviceStatus.DISCONNECTED) R.drawable.baseline_connected_tv_24
                     else R.drawable.baseline_tv_24
                 ),
-                contentDescription = "contentDescription",
-                modifier = Modifier
-                    .size(32.dp)
-                    .align(Alignment.CenterVertically),
-                tint = if (deviceData.isPoweredOn) onlineTVColor() else offlineTVColor(),
+                contentDescription = null,
+                modifier = Modifier.size(22.dp),
+                tint = AppColors.Content,
             )
+        }
 
-            Column(modifier = Modifier.padding(start = 15.dp)) {
-                Text(deviceData.displayName)
-                val subText = if (!deviceData.isPoweredOn)
-                    stringResource(string.device_list_offline)
-                else if (status == DeviceStatus.DISCONNECTED)
-                    stringResource(string.device_list_disconnected)
-                else
-                    stringResource(string.device_list_connected)
-                Text(subText)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 16.dp)
+        ) {
+            Text(
+                text = deviceData.displayName,
+                style = MaterialTheme.typography.bodyLarge,
+                color = AppColors.Content,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(statusColor)
+                )
+                Text(
+                    text = statusText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = AppColors.ContentSecondary,
+                    modifier = Modifier.padding(start = 6.dp),
+                )
             }
         }
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+            contentDescription = null,
+            tint = AppColors.ContentTertiary,
+        )
     }
 }
 
@@ -334,9 +419,9 @@ data class DeviceItemData(
 fun Sonar(
     modifier: Modifier = Modifier,
 ) {
-    val color = MaterialTheme.colorScheme.tertiary
-    val colorStart = color.copy(alpha = .9F)
-    val colorEnd = color.copy(alpha = .3F)
+    val color = AppColors.Accent
+    val colorStart = color.copy(alpha = .05F)
+    val colorEnd = color.copy(alpha = .45F)
     val brush = remember(colorStart, colorEnd) {
         Brush.radialGradient(
             colors = listOf(colorStart, colorEnd)

@@ -1,54 +1,49 @@
 package com.github.heroslender.lgtvcontroller.ui.home
 
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.Icons.Filled
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.filled.ElectricalServices
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Widgets
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.rounded.VolumeOff
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.PowerSettingsNew
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -57,15 +52,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.model.GlideUrl
 import com.github.heroslender.lgtvcontroller.ControllerTopAppBar
-import com.github.heroslender.lgtvcontroller.R
 import com.github.heroslender.lgtvcontroller.R.string
 import com.github.heroslender.lgtvcontroller.TopAppBarAction
 import com.github.heroslender.lgtvcontroller.device.DeviceControllerButton
@@ -75,19 +67,18 @@ import com.github.heroslender.lgtvcontroller.domain.model.App
 import com.github.heroslender.lgtvcontroller.domain.model.Input
 import com.github.heroslender.lgtvcontroller.ui.ConnectedDeviceScaffold
 import com.github.heroslender.lgtvcontroller.ui.TvTextInputState
-import com.github.heroslender.lgtvcontroller.ui.controller.ButtonShape
-import com.github.heroslender.lgtvcontroller.ui.controller.CIconButton
-import com.github.heroslender.lgtvcontroller.ui.controller.CTextButton
+import com.github.heroslender.lgtvcontroller.ui.controller.RemoteCapsule
+import com.github.heroslender.lgtvcontroller.ui.controller.RemoteCircleButton
 import com.github.heroslender.lgtvcontroller.ui.icons.MyIconPack
 import com.github.heroslender.lgtvcontroller.ui.icons.myiconpack.TvRemote
 import com.github.heroslender.lgtvcontroller.ui.snackbar.Snackbar
+import com.github.heroslender.lgtvcontroller.ui.theme.AppColors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview()
+@Preview(showBackground = true, backgroundColor = 0xFF000000, heightDp = 800)
 @Composable
 fun HomePreview(
     isConnected: Boolean = true,
@@ -100,7 +91,7 @@ fun HomePreview(
             ?: DeviceStatus.DISCONNECTED,
         runningApp = "netflix",
         apps = listOf(
-            App(id = "youtube", name = "YouTube Yoyu YOuY asd", icon = "a"),
+            App(id = "youtube", name = "YouTube", icon = "a"),
             App(id = "netflix", name = "Netflix", icon = "a"),
         ),
         inputs = listOf(
@@ -121,7 +112,6 @@ fun HomePreview(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -155,22 +145,23 @@ fun HomeScreen(
     ConnectedDeviceScaffold(
         errorFlow = errorFlow,
         textInputState = textInputState,
+        containerColor = AppColors.Background,
         topBar = {
             ControllerTopAppBar(
                 title = uiState.deviceName ?: "",
                 subtitle = buildAnnotatedString {
-                    if (uiState.deviceStatus == DeviceStatus.CONNECTED) {
-                        withStyle(style = SpanStyle(color = colorResource(R.color.connected))) {
-                            append("● ")
-                        }
+                    val dot = when (uiState.deviceStatus) {
+                        DeviceStatus.CONNECTED -> AppColors.Green
+                        DeviceStatus.CONNECTING, DeviceStatus.PAIRING -> AppColors.Yellow
+                        DeviceStatus.DISCONNECTED -> AppColors.ContentTertiary
                     }
-
+                    withStyle(SpanStyle(color = dot)) { append("● ") }
                     append(stringResource(uiState.deviceStatus.nameResId))
                 },
                 navigateUp = navigateToDeviceList,
                 actions = {
                     TopAppBarAction(
-                        imageVector = Filled.Settings,
+                        imageVector = Icons.Rounded.Settings,
                         contentDescription = stringResource(string.edit_button),
                         enabled = uiState.deviceID != null,
                     ) {
@@ -181,9 +172,10 @@ fun HomeScreen(
         }
     ) {
         Column(
+            verticalArrangement = Arrangement.spacedBy(28.dp),
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .verticalScroll(rememberScrollState())
+                .padding(top = 8.dp, bottom = 32.dp)
         ) {
             ControllerShortcutsCard(
                 isConnected = uiState.deviceID != null,
@@ -195,20 +187,27 @@ fun HomeScreen(
             AppsCard(
                 apps = uiState.apps,
                 runningApp = uiState.runningApp,
-                openApp = { app ->
-                    uiState.launchApp(app.id)
-                }
+                openApp = { app -> uiState.launchApp(app.id) }
             )
 
             InputsCard(
                 inputs = uiState.inputs,
                 runningApp = uiState.runningApp,
-                switchInput = { input ->
-                    uiState.launchApp(input.id)
-                }
+                switchInput = { input -> uiState.launchApp(input.id) }
             )
         }
     }
+}
+
+/** Cabeçalho de seção: texto pequeno, cinza e em maiúsculas. */
+@Composable
+fun SectionHeader(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text.uppercase(),
+        style = MaterialTheme.typography.labelSmall,
+        color = AppColors.ContentSecondary,
+        modifier = modifier.padding(start = 36.dp, end = 36.dp, bottom = 8.dp),
+    )
 }
 
 @Composable
@@ -218,91 +217,111 @@ fun ControllerShortcutsCard(
     executeButton: (DeviceControllerButton) -> Unit,
     navigateToController: () -> Unit,
 ) {
-    ContentCard(
-        iconVector = MyIconPack.TvRemote,
-        header = stringResource(string.controller_card_title),
-        openCard = if (isConnected) navigateToController else null
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CIconButton(
-                    iconId = R.drawable.baseline_power_24,
-                    contentDescription = stringResource(string.power_button),
-                    enabled = hasCapability(DeviceControllerButton.POWER),
-                    modifier = Modifier
-                        .weight(1F)
-                        .aspectRatio(1F, true),
-                ) {
-                    executeButton(DeviceControllerButton.POWER)
-                }
-                CIconButton(
-                    imageVector = Icons.AutoMirrored.Filled.VolumeOff,
-                    contentDescription = stringResource(string.mute_button),
-                    enabled = hasCapability(DeviceControllerButton.MUTE),
-                    modifier = Modifier
-                        .weight(1F)
-                        .aspectRatio(1F, true),
-                ) {
-                    executeButton(DeviceControllerButton.MUTE)
-                }
-                CIconButton(
-                    iconId = R.drawable.baseline_home_24,
-                    contentDescription = stringResource(string.home_button),
-                    enabled = hasCapability(DeviceControllerButton.HOME),
-                    modifier = Modifier
-                        .weight(1F)
-                        .aspectRatio(1F, true),
-                ) {
-                    executeButton(DeviceControllerButton.HOME)
-                }
+    Column(Modifier.padding(horizontal = 20.dp)) {
+        // Cartão grande que abre o controle completo
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp))
+                .background(AppColors.Surface)
+                .clickable(enabled = isConnected, onClick = navigateToController)
+                .padding(16.dp),
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(AppColors.SurfaceHigh),
+            ) {
+                Icon(
+                    imageVector = MyIconPack.TvRemote,
+                    contentDescription = null,
+                    tint = AppColors.Content,
+                    modifier = Modifier.size(28.dp),
+                )
             }
+            Column(
+                Modifier
+                    .weight(1f)
+                    .padding(start = 14.dp)
+            ) {
+                Text(
+                    text = stringResource(string.controller_card_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AppColors.Content,
+                )
+                Text(
+                    text = stringResource(string.open_remote),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = AppColors.ContentSecondary,
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                contentDescription = null,
+                tint = AppColors.ContentTertiary,
+            )
+        }
 
-            VolumeControls(
-                hasCapability = hasCapability,
-                executeButton = executeButton,
+        Spacer(Modifier.height(12.dp))
+
+        // Atalhos rápidos
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            ShortcutButton(
+                icon = Icons.Rounded.PowerSettingsNew,
+                description = stringResource(string.power_button),
+                enabled = hasCapability(DeviceControllerButton.POWER),
+            ) { executeButton(DeviceControllerButton.POWER) }
+
+            ShortcutButton(
+                icon = Icons.AutoMirrored.Rounded.VolumeOff,
+                description = stringResource(string.mute_button),
+                enabled = hasCapability(DeviceControllerButton.MUTE),
+            ) { executeButton(DeviceControllerButton.MUTE) }
+
+            ShortcutButton(
+                icon = Icons.Rounded.Home,
+                description = stringResource(string.home_button),
+                enabled = hasCapability(DeviceControllerButton.HOME),
+            ) { executeButton(DeviceControllerButton.HOME) }
+
+            RemoteCapsule(
+                label = stringResource(string.volume_controls),
+                decreaseIcon = Icons.Rounded.Remove,
+                decreaseDescription = stringResource(string.volume_down_button),
+                onDecrease = { executeButton(DeviceControllerButton.VOLUME_DOWN) },
+                increaseIcon = Icons.Rounded.Add,
+                increaseDescription = stringResource(string.volume_up_button),
+                onIncrease = { executeButton(DeviceControllerButton.VOLUME_UP) },
+                enabled = hasCapability(DeviceControllerButton.VOLUME_UP),
+                modifier = Modifier.weight(1f),
             )
         }
     }
 }
 
 @Composable
-fun ColumnScope.VolumeControls(
-    hasCapability: (DeviceControllerButton) -> Boolean,
-    executeButton: (DeviceControllerButton) -> Unit,
-    modifier: Modifier = Modifier,
+private fun ShortcutButton(
+    icon: ImageVector,
+    description: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
 ) {
-    val isEnabled = hasCapability(DeviceControllerButton.VOLUME_UP)
-    HorizontalControls(
-        centerText = stringResource(string.volume_controls),
-        modifier = modifier,
-        enabled = isEnabled,
-        topButton = {
-            CTextButton(
-                text = stringResource(string.volume_down_button),
-                fontSize = 6.em,
-                enabled = isEnabled,
-                modifier = Modifier
-                    .weight(1F)
-                    .fillMaxWidth()
-                    .aspectRatio(1.4F, false),
-            ) {
-                executeButton(DeviceControllerButton.VOLUME_DOWN)
-            }
-        },
-        bottomButton = {
-            CTextButton(
-                text = stringResource(string.volume_up_button),
-                fontSize = 6.em,
-                enabled = isEnabled,
-                modifier = Modifier
-                    .weight(1F)
-                    .fillMaxWidth()
-                    .aspectRatio(1.4F, false),
-            ) {
-                executeButton(DeviceControllerButton.VOLUME_UP)
-            }
-        }
-    )
+    RemoteCircleButton(
+        onClick = onClick,
+        size = 48.dp,
+        enabled = enabled,
+        containerColor = AppColors.Surface,
+        contentDescription = description,
+    ) {
+        Icon(icon, description, tint = AppColors.Content, modifier = Modifier.size(20.dp))
+    }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -312,62 +331,25 @@ fun AppsCard(
     runningApp: String,
     openApp: (App) -> Unit,
 ) {
-    ScrollContentCard(
-        iconVector = Filled.Widgets,
-        header = stringResource(string.apps_card_title),
-    ) {
-        for (appInfo in apps) {
-            TextButton(
-                onClick = { openApp(appInfo) },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .height(96.dp)
-                    .width(IntrinsicSize.Min),
-                colors = if (appInfo.id == runningApp) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
-                contentPadding = PaddingValues(6.dp),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier
-                        .height(96.dp)
+    if (apps.isEmpty()) return
+    Column {
+        SectionHeader(stringResource(string.apps_card_title))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
+        ) {
+            items(apps) { app ->
+                Tile(
+                    label = app.name,
+                    selected = app.id == runningApp,
+                    onClick = { openApp(app) },
                 ) {
                     GlideImage(
-                        model = CustomGlideUrl(appInfo.icon, appInfo.name),
-                        contentDescription = appInfo.name,
-                        modifier = Modifier
-                            .weight(1F)
-                            .aspectRatio(1F, true)
-                            .clip(RoundedCornerShape(8.dp)),
-                        loading = placeholder {
-                            CircularProgressIndicator(
-                                color = if (appInfo.id == runningApp) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .weight(1F)
-                                    .aspectRatio(1F, true)
-                            )
-                        },
-                        failure = placeholder {
-                            CircularProgressIndicator(
-                                color = if (appInfo.id == runningApp) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .weight(1F)
-                                    .aspectRatio(1F, true)
-                            )
-                        }
-                    )
-
-                    Text(
-                        text = appInfo.name,
-                        modifier = Modifier,
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = LocalTextStyle.current.fontSize * .8,
-                            maxFontSize = LocalTextStyle.current.fontSize
-                        ),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
+                        model = CustomGlideUrl(app.icon, app.name),
+                        contentDescription = app.name,
+                        modifier = Modifier.fillTile(),
+                        loading = placeholder { TilePlaceholder() },
+                        failure = placeholder { TilePlaceholder() },
                     )
                 }
             }
@@ -391,66 +373,29 @@ fun InputsCard(
     runningApp: String,
     switchInput: (Input) -> Unit,
 ) {
-    ScrollContentCard(
-        iconVector = Filled.ElectricalServices,
-        header = stringResource(string.inputs_card_title),
-    ) {
-        for (appInfo in inputs) {
-            TextButton(
-                onClick = { switchInput(appInfo) },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.height(96.dp),
-                colors = if (appInfo.id == runningApp) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
-                contentPadding = PaddingValues(6.dp),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .height(96.dp)
+    if (inputs.isEmpty()) return
+    Column {
+        SectionHeader(stringResource(string.inputs_card_title))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
+        ) {
+            items(inputs) { input ->
+                Tile(
+                    label = input.name,
+                    selected = input.id == runningApp,
+                    showDot = input.connected,
+                    onClick = { switchInput(input) },
                 ) {
                     GlideImage(
-                        model = CustomGlideUrl(appInfo.icon, appInfo.name),
-                        contentDescription = appInfo.name,
+                        model = CustomGlideUrl(input.icon, input.name),
+                        contentDescription = input.name,
+                        colorFilter = ColorFilter.tint(AppColors.Content),
                         modifier = Modifier
-                            .weight(1F)
-                            .aspectRatio(1F, true),
-                        colorFilter = ColorFilter.tint(LocalContentColor.current),
-                        loading = placeholder {
-                            CircularProgressIndicator(
-                                color = if (appInfo.id == runningApp) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .weight(1F)
-                                    .aspectRatio(1F, true)
-                            )
-                        },
-                        failure = placeholder {
-                            CircularProgressIndicator(
-                                color = if (appInfo.id == runningApp) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .weight(1F)
-                                    .aspectRatio(1F, true)
-                            )
-                        }
-                    )
-
-                    Text(
-                        text = buildAnnotatedString {
-                            if (appInfo.connected) {
-                                withStyle(style = SpanStyle(color = colorResource(R.color.connected))) {
-                                    append("● ")
-                                }
-                            }
-
-                            append(appInfo.name)
-                        },
-                        modifier = Modifier,
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = 8.sp,
-                            maxFontSize = LocalTextStyle.current.fontSize
-                        ),
-                        maxLines = 1
+                            .fillTile()
+                            .padding(18.dp),
+                        loading = placeholder { TilePlaceholder() },
+                        failure = placeholder { TilePlaceholder() },
                     )
                 }
             }
@@ -458,132 +403,67 @@ fun InputsCard(
     }
 }
 
+private fun Modifier.fillTile(): Modifier = this.size(TileSize)
+
+private val TileSize = 76.dp
+
 @Composable
-fun ScrollContentCard(
-    iconVector: ImageVector,
-    header: String,
-    openCard: (() -> Unit)? = null,
-    content: @Composable RowScope.() -> Unit,
-) {
-    ContentCard(
-        iconVector = iconVector,
-        header = header,
-        openCard = openCard
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            content = content
+private fun TilePlaceholder() {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(TileSize)) {
+        CircularProgressIndicator(
+            color = AppColors.ContentSecondary,
+            strokeWidth = 2.dp,
+            modifier = Modifier.size(22.dp),
         )
     }
 }
 
+/**
+ * Bloco de app/entrada: ícone num quadrado arredondado,
+ * nome embaixo e um contorno branco no que está aberto na TV.
+ */
 @Composable
-fun Card(
-    iconVector: ImageVector,
-    header: String,
-    modifier: Modifier = Modifier,
-    colors: CardColors = CardDefaults.elevatedCardColors(),
-    openCardIcon: ImageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-    openCard: (() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit,
+private fun Tile(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    showDot: Boolean = false,
+    icon: @Composable () -> Unit,
 ) {
-    val cardContent: @Composable ColumnScope.() -> Unit = {
-        Column {
-            Row(modifier = Modifier.padding(16.dp)) {
-                Icon(
-                    imageVector = iconVector,
-                    contentDescription = header,
-                )
-                Text(
-                    text = header,
-                    modifier = Modifier.padding(start = 8.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
+    val borderColor by animateColorAsState(
+        if (selected) AppColors.Content else AppColors.Surface,
+        label = "tileBorder",
+    )
+    val shape = remember { RoundedCornerShape(20.dp) }
 
-                if (openCard != null) {
-                    Spacer(Modifier.weight(1F))
-
-                    Icon(
-                        imageVector = openCardIcon,
-                        contentDescription = null,
-                    )
-                }
-            }
-
-            content()
-        }
-    }
-
-    if (openCard != null) {
-        ElevatedCard(
-            modifier = modifier.padding(top = 16.dp),
-            onClick = openCard,
-            colors = colors,
-            content = cardContent
-        )
-    } else {
-        ElevatedCard(
-            modifier = modifier.padding(top = 16.dp),
-            colors = colors,
-            content = cardContent
-        )
-    }
-}
-
-@Composable
-fun ContentCard(
-    iconVector: ImageVector,
-    header: String,
-    modifier: Modifier = Modifier,
-    colors: CardColors = CardDefaults.elevatedCardColors(),
-    openCard: (() -> Unit)? = null,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Card(
-        iconVector = iconVector,
-        header = header,
-        colors = colors,
-        modifier = modifier,
-        openCard = openCard,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .width(TileSize + 8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick),
     ) {
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            content = content
-        )
-    }
-}
-
-@Composable
-fun ColumnScope.HorizontalControls(
-    centerText: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    topButton: @Composable () -> Unit,
-    bottomButton: @Composable () -> Unit,
-) {
-    Surface(
-        shape = ButtonShape,
-        color = if (enabled) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-        modifier = modifier
-    ) {
-        Row {
-            topButton()
-
-            Text(
-                text = centerText,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .weight(1F),
-                fontSize = 3.em,
-            )
-
-            bottomButton()
+                .size(TileSize)
+                .clip(shape)
+                .background(AppColors.Surface)
+                .border(2.dp, borderColor, shape),
+        ) {
+            icon()
         }
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = buildAnnotatedString {
+                if (showDot) withStyle(SpanStyle(color = AppColors.Green)) { append("● ") }
+                append(label)
+            },
+            style = MaterialTheme.typography.labelMedium,
+            color = if (selected) AppColors.Content else AppColors.ContentSecondary,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }

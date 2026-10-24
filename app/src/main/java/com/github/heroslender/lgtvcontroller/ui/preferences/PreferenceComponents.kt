@@ -30,6 +30,13 @@ import androidx.compose.ui.unit.dp
 import com.github.heroslender.lgtvcontroller.ControllerTopAppBar
 import com.github.heroslender.lgtvcontroller.R.string
 import com.github.heroslender.lgtvcontroller.ui.theme.LGTVControllerTheme
+import com.github.heroslender.lgtvcontroller.ui.theme.AppColors
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,9 +117,9 @@ fun PreferenceCategory(
 ) {
     Text(
         text = text,
-        color = MaterialTheme.colorScheme.primary,
-        style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier.padding(bottom = 12.dp),
+        color = AppColors.ContentSecondary,
+        style = MaterialTheme.typography.labelSmall,
+        modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
     )
 }
 
@@ -130,8 +137,8 @@ fun SwitchPrefence(
 ) {
     Row(
         modifier = Modifier
-            .padding(bottom = 16.dp)
             .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Column(
             modifier = Modifier
@@ -155,7 +162,39 @@ fun SwitchPrefence(
         Switch(
             checked = value,
             onCheckedChange = { onValueChange(it) },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = AppColors.Green,
+                checkedBorderColor = AppColors.Green,
+                uncheckedThumbColor = Color.White,
+                uncheckedTrackColor = AppColors.SurfaceHighest,
+                uncheckedBorderColor = AppColors.SurfaceHighest,
+            ),
             modifier = Modifier.align(Alignment.CenterVertically)
         )
     }
+}
+
+/** Grupo de preferências em um bloco arredondado. */
+@Composable
+fun PreferenceGroup(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(AppColors.Surface),
+        content = content,
+    )
+}
+
+@Composable
+fun PreferenceDivider() {
+    HorizontalDivider(
+        color = AppColors.Separator,
+        thickness = 0.5.dp,
+        modifier = Modifier.padding(start = 16.dp),
+    )
 }

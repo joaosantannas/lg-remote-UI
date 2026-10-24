@@ -52,4 +52,6 @@
     <string name="swipe_mode_button">Swipe mode</string>
     <string name="touchpad_hint_swipe">Swipe to navigate · Tap to select</string>
     <string name="touchpad_hint_pointer">Drag to move the pointer · Tap to click</string>
+    <string name="device_list_title">TVs</string>
+    <string name="open_remote">Open remote</string>
 </resources>

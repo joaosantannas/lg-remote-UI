@@ -1,111 +1,78 @@
 package com.github.heroslender.lgtvcontroller.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
-private val lightScheme = lightColorScheme(
-    primary = primaryLight,
-    onPrimary = onPrimaryLight,
-    primaryContainer = primaryContainerLight,
-    onPrimaryContainer = onPrimaryContainerLight,
-    secondary = secondaryLight,
-    onSecondary = onSecondaryLight,
-    secondaryContainer = secondaryContainerLight,
-    onSecondaryContainer = onSecondaryContainerLight,
-    tertiary = tertiaryLight,
-    onTertiary = onTertiaryLight,
-    tertiaryContainer = tertiaryContainerLight,
-    onTertiaryContainer = onTertiaryContainerLight,
-    error = errorLight,
-    onError = onErrorLight,
-    errorContainer = errorContainerLight,
-    onErrorContainer = onErrorContainerLight,
-    background = backgroundLight,
-    onBackground = onBackgroundLight,
-    surface = surfaceLight,
-    onSurface = onSurfaceLight,
-    surfaceVariant = surfaceVariantLight,
-    onSurfaceVariant = onSurfaceVariantLight,
-    outline = outlineLight,
-    outlineVariant = outlineVariantLight,
-    scrim = scrimLight,
-    inverseSurface = inverseSurfaceLight,
-    inverseOnSurface = inverseOnSurfaceLight,
-    inversePrimary = inversePrimaryLight,
-    surfaceDim = surfaceDimLight,
-    surfaceBright = surfaceBrightLight,
-    surfaceContainerLowest = surfaceContainerLowestLight,
-    surfaceContainerLow = surfaceContainerLowLight,
-    surfaceContainer = surfaceContainerLight,
-    surfaceContainerHigh = surfaceContainerHighLight,
-    surfaceContainerHighest = surfaceContainerHighestLight,
-)
+/**
+ * Identidade visual única do app: escuro e minimalista.
+ * O app ignora o tema claro e as cores dinâmicas do Android de propósito,
+ * para que todas as telas fiquem iguais à tela do controle.
+ */
+object AppColors {
+    val Background = Color(0xFF000000)
+    val Surface = Color(0xFF1C1C1E)
+    val SurfaceHigh = Color(0xFF2C2C2E)
+    val SurfaceHighest = Color(0xFF3A3A3C)
+    val Separator = Color(0xFF38383A)
+    val Content = Color(0xFFFFFFFF)
+    val ContentSecondary = Color(0xFF8E8E93)
+    val ContentTertiary = Color(0xFF48484A)
+    val Accent = Color(0xFF0A84FF)
+    val Green = Color(0xFF30D158)
+    val Yellow = Color(0xFFFFD60A)
+    val Red = Color(0xFFFF453A)
+}
 
-private val darkScheme = darkColorScheme(
-    primary = primaryDark,
-    onPrimary = onPrimaryDark,
-    primaryContainer = primaryContainerDark,
-    onPrimaryContainer = onPrimaryContainerDark,
-    secondary = secondaryDark,
-    onSecondary = onSecondaryDark,
-    secondaryContainer = secondaryContainerDark,
-    onSecondaryContainer = onSecondaryContainerDark,
-    tertiary = tertiaryDark,
-    onTertiary = onTertiaryDark,
-    tertiaryContainer = tertiaryContainerDark,
-    onTertiaryContainer = onTertiaryContainerDark,
-    error = errorDark,
-    onError = onErrorDark,
-    errorContainer = errorContainerDark,
-    onErrorContainer = onErrorContainerDark,
-    background = backgroundDark,
-    onBackground = onBackgroundDark,
-    surface = surfaceDark,
-    onSurface = onSurfaceDark,
-    surfaceVariant = surfaceVariantDark,
-    onSurfaceVariant = onSurfaceVariantDark,
-    outline = outlineDark,
-    outlineVariant = outlineVariantDark,
-    scrim = scrimDark,
-    inverseSurface = inverseSurfaceDark,
-    inverseOnSurface = inverseOnSurfaceDark,
-    inversePrimary = inversePrimaryDark,
-    surfaceDim = surfaceDimDark,
-    surfaceBright = surfaceBrightDark,
-    surfaceContainerLowest = surfaceContainerLowestDark,
-    surfaceContainerLow = surfaceContainerLowDark,
-    surfaceContainer = surfaceContainerDark,
-    surfaceContainerHigh = surfaceContainerHighDark,
-    surfaceContainerHighest = surfaceContainerHighestDark,
+private val appScheme = darkColorScheme(
+    primary = AppColors.Accent,
+    onPrimary = Color.White,
+    primaryContainer = AppColors.SurfaceHigh,
+    onPrimaryContainer = AppColors.Content,
+    secondary = AppColors.ContentSecondary,
+    onSecondary = Color.Black,
+    secondaryContainer = AppColors.SurfaceHigh,
+    onSecondaryContainer = AppColors.Content,
+    tertiary = AppColors.Accent,
+    onTertiary = Color.White,
+    tertiaryContainer = AppColors.SurfaceHigh,
+    onTertiaryContainer = AppColors.Content,
+    error = AppColors.Red,
+    onError = Color.White,
+    errorContainer = Color(0xFF3A1A1A),
+    onErrorContainer = Color(0xFFFFDAD6),
+    background = AppColors.Background,
+    onBackground = AppColors.Content,
+    surface = AppColors.Background,
+    onSurface = AppColors.Content,
+    surfaceVariant = AppColors.SurfaceHigh,
+    onSurfaceVariant = AppColors.ContentSecondary,
+    outline = AppColors.SurfaceHighest,
+    outlineVariant = AppColors.Separator,
+    scrim = Color.Black,
+    inverseSurface = AppColors.Content,
+    inverseOnSurface = AppColors.Surface,
+    inversePrimary = AppColors.Accent,
+    surfaceDim = AppColors.Background,
+    surfaceBright = AppColors.SurfaceHigh,
+    surfaceContainerLowest = AppColors.Background,
+    surfaceContainerLow = AppColors.Surface,
+    surfaceContainer = AppColors.Surface,
+    surfaceContainerHigh = AppColors.SurfaceHigh,
+    surfaceContainerHighest = AppColors.SurfaceHigh,
 )
 
 @Composable
 fun LGTVControllerTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable() () -> Unit
+    @Suppress("UNUSED_PARAMETER") darkTheme: Boolean = true,
+    @Suppress("UNUSED_PARAMETER") dynamicColor: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> darkScheme
-        else -> lightScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = appScheme,
         typography = Typography,
-        content = content
+        shapes = AppShapes,
+        content = content,
     )
 }

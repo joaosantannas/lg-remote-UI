@@ -23,6 +23,11 @@ import com.github.heroslender.lgtvcontroller.ControllerTopAppBar
 import com.github.heroslender.lgtvcontroller.R.string
 import com.github.heroslender.lgtvcontroller.ui.ConnectedDeviceScaffold
 import com.github.heroslender.lgtvcontroller.ui.preferences.SwitchPrefence
+import com.github.heroslender.lgtvcontroller.ui.preferences.PreferenceCategory
+import com.github.heroslender.lgtvcontroller.ui.preferences.PreferenceDivider
+import com.github.heroslender.lgtvcontroller.ui.preferences.PreferenceGroup
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import com.github.heroslender.lgtvcontroller.ui.preferences.TextPrefence
 import com.github.heroslender.lgtvcontroller.ui.theme.LGTVControllerTheme
 
@@ -99,34 +104,41 @@ fun TvEditBody(
     modifier: Modifier = Modifier,
 ) {
     val tvDetails = uiState.tvDetails
-    Column(modifier = modifier.padding(15.dp, 10.dp)) {
-        TextPrefence(
-            title = "ID",
-            value = tvDetails.tvId,
-        )
+    Column(modifier = modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+        PreferenceCategory("Device")
+        PreferenceGroup {
+            TextPrefence(
+                title = "Display name",
+                value = tvDetails.tvDisplayName,
+                inputValidation = uiState.displayNameValidator,
+                onValueChange = { newValue ->
+                    onValueChange(tvDetails.copy(tvDisplayName = newValue.trim()))
+                }
+            )
+            PreferenceDivider()
+            SwitchPrefence(
+                title = "Auto Connect",
+                subtitle = "Automatically connect to this device when the app starts",
+                value = tvDetails.autoConnect,
+                onValueChange = { newValue ->
+                    onValueChange(tvDetails.copy(autoConnect = newValue))
+                }
+            )
+        }
 
-        TextPrefence(
-            title = "Name",
-            value = tvDetails.tvName,
-        )
+        Spacer(Modifier.height(28.dp))
 
-        TextPrefence(
-            title = "Display name",
-            value = tvDetails.tvDisplayName,
-            inputValidation = uiState.displayNameValidator,
-            onValueChange = { newValue ->
-                onValueChange(tvDetails.copy(tvDisplayName = newValue.trim()))
-            }
-        )
-
-        SwitchPrefence(
-            title = "Auto Connect",
-            subtitle = "Automatically connect to this device when the app starts",
-            value = tvDetails.autoConnect,
-            onValueChange = { newValue ->
-                println("Switch changed to $newValue from ${tvDetails.autoConnect}")
-                onValueChange(tvDetails.copy(autoConnect = newValue))
-            }
-        )
+        PreferenceCategory("Info")
+        PreferenceGroup {
+            TextPrefence(
+                title = "Name",
+                value = tvDetails.tvName,
+            )
+            PreferenceDivider()
+            TextPrefence(
+                title = "ID",
+                value = tvDetails.tvId,
+            )
+        }
     }
 }
