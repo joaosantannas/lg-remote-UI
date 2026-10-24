@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Tela da TV -->
-    <path
-        android:pathData="M36,35h36a6,6 0,0 1,6 6v24a6,6 0,0 1,-6 6h-36a6,6 0,0 1,-6 -6v-24a6,6 0,0 1,6 -6z"
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="3.5" />
-    <!-- Pé da TV -->
-    <path
-        android:pathData="M45,77.5h18"
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="3.5"
-        android:strokeLineCap="round" />
-    <!-- Onda do toque -->
-    <path
-        android:pathData="M54,44a9,9 0,1 1,0 18a9,9 0,1 1,0 -18z"
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="2" />
-    <!-- Ponto do toque -->
-    <path
-        android:pathData="M54,49a4,4 0,1 1,0 8a4,4 0,1 1,0 -8z"
-        android:fillColor="#FFFFFFFF" />
+    <!-- Silhueta do controle, com os botões vazados -->
+    <path android:fillType="evenOdd" android:fillColor="#FFFFFFFF"
+        android:pathData="M48.30,24.90h11.40a5.60,5.60 0,0 1,5.60,5.60v47.00a5.60,5.60 0,0 1,-5.60,5.60h-11.40a5.60,5.60 0,0 1,-5.60,-5.60v-47.00a5.60,5.60 0,0 1,5.60,-5.60zM45.80,38.80a8.20,8.20 0,1 1,16.40,0a8.20,8.20 0,1 1,-16.40,0zM47.00,51.70a2.90,2.90 0,1 1,5.80,0a2.90,2.90 0,1 1,-5.80,0zM55.20,51.70a2.90,2.90 0,1 1,5.80,0a2.90,2.90 0,1 1,-5.80,0zM47.00,59.90a2.90,2.90 0,1 1,5.80,0a2.90,2.90 0,1 1,-5.80,0zM47.00,68.00a2.90,2.90 0,1 1,5.80,0a2.90,2.90 0,1 1,-5.80,0zM58.10,56.90h-0.00a2.90,2.90 0,0 1,2.90,2.90v8.30a2.90,2.90 0,0 1,-2.90,2.90h0.00a2.90,2.90 0,0 1,-2.90,-2.90v-8.30a2.90,2.90 0,0 1,2.90,-2.90z" />
 </vector>
