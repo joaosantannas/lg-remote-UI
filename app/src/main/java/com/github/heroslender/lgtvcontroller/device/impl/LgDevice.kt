@@ -159,6 +159,49 @@ class LgDevice(
         service.launchApp(appId, null)
     }
 
+    /** ID do app encontrado pelo nome, para não consultar a lista da TV a cada toque. */
+    private val appIdByName = mutableMapOf<String, String>()
+
+    override fun launchAppByName(name: String, onNotFound: () -> Unit) {
+        val key = normalizeAppName(name)
+        appIdByName[key]?.let { return launchApp(it) }
+
+        // A lista em cache só tem apps instalados; a da TV inclui também os de sistema.
+        _state.value.apps.firstOrNull { normalizeAppName(it.name) == key }?.let {
+            appIdByName[key] = it.id
+            return launchApp(it.id)
+        }
+
+        device.device.launcher.getAppList(object : Launcher.AppListListener {
+            override fun onSuccess(apps: List<AppInfo>) {
+                val found = apps.firstOrNull { normalizeAppName(it.name) == key }
+                    ?: apps.firstOrNull { normalizeAppName(it.name).contains(key) }
+                if (found != null) {
+                    appIdByName[key] = found.id
+                    launchApp(found.id)
+                } else {
+                    onNotFound()
+                    scope.launch {
+                        _errors.emit(Snackbar.error("App \"$name\" não encontrado na TV"))
+                    }
+                }
+            }
+
+            override fun onError(error: ServiceCommandError) {
+                onNotFound()
+                scope.launch {
+                    _errors.emit(Snackbar.error("Não foi possível abrir \"$name\"", error.message))
+                }
+            }
+        })
+    }
+
+    private fun normalizeAppName(name: String): String =
+        java.text.Normalizer.normalize(name, java.text.Normalizer.Form.NFD)
+            .replace(Regex("\\p{Mn}+"), "")
+            .lowercase()
+            .trim()
+
     override fun disconnect() {
         device.device.disconnect()
     }

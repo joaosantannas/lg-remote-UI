@@ -137,6 +137,12 @@ interface Device {
 
     fun launchApp(appId: String)
 
+    /**
+     * Abre na TV o app cujo nome corresponde a [name] (sem diferenciar
+     * maiúsculas nem acentos). Se o app não for encontrado, chama [onNotFound].
+     */
+    fun launchAppByName(name: String, onNotFound: () -> Unit = {})
+
     fun sendText(text: String)
     fun sendEnter()
     fun sendDelete()

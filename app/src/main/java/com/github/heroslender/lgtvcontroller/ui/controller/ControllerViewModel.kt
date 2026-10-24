@@ -2,6 +2,7 @@ package com.github.heroslender.lgtvcontroller.ui.controller
 
 import androidx.lifecycle.viewModelScope
 import com.github.heroslender.lgtvcontroller.DeviceManager
+import com.github.heroslender.lgtvcontroller.device.DeviceControllerButton
 import com.github.heroslender.lgtvcontroller.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +32,15 @@ class ControllerViewModel @Inject constructor(
                     scroll = { x, y -> device.scroll(x, y) },
                     hasCapability = { device.hasCapability(it) },
                     executeButton = { device.executeControllerButton(it) },
+                    openHomeApp = {
+                        device.launchAppByName(HOME_APP_NAME) {
+                            device.executeControllerButton(DeviceControllerButton.HOME)
+                        }
+                    },
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, ControllerUiState())
 }
+
+/** Nome do app da TV que o botão 📺 abre. */
+const val HOME_APP_NAME = "TV Sala"

@@ -56,6 +56,7 @@ object PreviewDevice : Device {
     override fun scroll(x: Double, y: Double) {}
     override fun launchNetflix() {}
     override fun launchApp(appId: String) {}
+    override fun launchAppByName(name: String, onNotFound: () -> Unit) {}
     override fun sendText(text: String) {}
     override fun sendEnter() {}
     override fun sendDelete() {}

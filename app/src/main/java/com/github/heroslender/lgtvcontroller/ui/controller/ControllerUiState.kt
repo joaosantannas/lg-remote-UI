@@ -11,4 +11,6 @@ data class ControllerUiState(
     val scroll: (Double, Double) -> Unit = { _, _ -> },
     val hasCapability: (DeviceControllerButton) -> Boolean = { false },
     val executeButton: (DeviceControllerButton) -> Unit = {},
+    /** Botão 📺: abre o app "TV Sala" na TV (cai no Home normal se não achar). */
+    val openHomeApp: () -> Unit = {},
 )

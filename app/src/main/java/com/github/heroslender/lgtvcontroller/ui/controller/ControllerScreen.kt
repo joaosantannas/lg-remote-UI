@@ -185,7 +185,7 @@ fun ControllerScreen(
 
             SecondaryControls(has, exec)
 
-            PrimaryButtons(has, exec)
+            PrimaryButtons(has, exec, controllerUiState.openHomeApp)
         }
     }
 }
@@ -444,6 +444,7 @@ private fun SecondaryControls(
 private fun PrimaryButtons(
     has: (DeviceControllerButton) -> Boolean,
     exec: (DeviceControllerButton) -> Unit,
+    openHomeApp: () -> Unit,
 ) {
     // A LG tem teclas separadas de PLAY e PAUSE, então alternamos localmente.
     var isPlaying by rememberSaveable { mutableStateOf(true) }
@@ -496,8 +497,10 @@ private fun PrimaryButtons(
             )
         }
 
+        // Toque = abre o app "TV Sala" · Segurar = Home normal da TV
         RemoteCircleButton(
-            onClick = { exec(DeviceControllerButton.HOME) },
+            onClick = openHomeApp,
+            onLongClick = { exec(DeviceControllerButton.HOME) },
             size = 60.dp,
             enabled = has(DeviceControllerButton.HOME),
             contentDescription = stringResource(string.home_button),
