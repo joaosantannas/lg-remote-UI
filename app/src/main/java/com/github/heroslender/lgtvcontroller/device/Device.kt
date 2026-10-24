@@ -46,6 +46,11 @@ interface Device {
             DeviceControllerButton.SOURCE -> return hasCapability(ExternalInputControl.Any)
             DeviceControllerButton.MENU -> return hasCapability(KeyControl.Any)
             DeviceControllerButton.QMENU -> return hasCapability(KeyControl.Any)
+            DeviceControllerButton.PLAY,
+            DeviceControllerButton.PAUSE,
+            DeviceControllerButton.REWIND,
+            DeviceControllerButton.FAST_FORWARD,
+                -> return hasCapability(KeyControl.Any)
         }
     }
 
@@ -71,6 +76,10 @@ interface Device {
             DeviceControllerButton.SOURCE -> source()
             DeviceControllerButton.MENU -> menu()
             DeviceControllerButton.QMENU -> qmenu()
+            DeviceControllerButton.PLAY -> play()
+            DeviceControllerButton.PAUSE -> pause()
+            DeviceControllerButton.REWIND -> rewind()
+            DeviceControllerButton.FAST_FORWARD -> fastForward()
         }
     }
 
@@ -109,6 +118,14 @@ interface Device {
     fun menu()
 
     fun qmenu()
+
+    fun play()
+
+    fun pause()
+
+    fun rewind()
+
+    fun fastForward()
 
     fun launchNetflix()
 

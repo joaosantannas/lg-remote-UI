@@ -137,6 +137,22 @@ class LgDevice(
         service.sendSpecialKey("QMENU")
     }
 
+    override fun play() {
+        service.sendSpecialKey("PLAY")
+    }
+
+    override fun pause() {
+        service.sendSpecialKey("PAUSE")
+    }
+
+    override fun rewind() {
+        service.sendSpecialKey("REWIND")
+    }
+
+    override fun fastForward() {
+        service.sendSpecialKey("FASTFORWARD")
+    }
+
     override fun launchNetflix() = launchApp("netflix")
 
     override fun launchApp(appId: String) {

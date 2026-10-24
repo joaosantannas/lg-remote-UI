@@ -47,6 +47,10 @@ object PreviewDevice : Device {
     override fun source() {}
     override fun menu() {}
     override fun qmenu() {}
+    override fun play() {}
+    override fun pause() {}
+    override fun rewind() {}
+    override fun fastForward() {}
     override fun mouseClick() {}
     override fun moveMouse(x: Double, y: Double) {}
     override fun scroll(x: Double, y: Double) {}

@@ -19,4 +19,8 @@ enum class DeviceControllerButton {
     SOURCE,
     MENU,
     QMENU,
+    PLAY,
+    PAUSE,
+    REWIND,
+    FAST_FORWARD,
 }

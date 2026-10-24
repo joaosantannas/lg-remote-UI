@@ -43,4 +43,13 @@
     <string name="text_input_dialog_title">Set text input</string>
     <string name="text_input_dialog_success_title">Set text input</string>
     <string name="text_input_dialog_success_description">Text input was set to: %1$s</string>
+    <string name="play_pause_button">Play/Pause</string>
+    <string name="rewind_button">Rewind</string>
+    <string name="fast_forward_button">Fast forward</string>
+    <string name="info_button">Info</string>
+    <string name="exit_button">Exit</string>
+    <string name="pointer_mode_button">Pointer mode</string>
+    <string name="swipe_mode_button">Swipe mode</string>
+    <string name="touchpad_hint_swipe">Swipe to navigate · Tap to select</string>
+    <string name="touchpad_hint_pointer">Drag to move the pointer · Tap to click</string>
 </resources>

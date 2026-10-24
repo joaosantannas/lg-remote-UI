@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.heroslender.lgtvcontroller.R.string
@@ -41,6 +42,7 @@ fun ConnectedDeviceScaffold(
     errorFlow: Flow<Snackbar>,
     textInputState: TvTextInputState,
     topBar: @Composable () -> Unit = {},
+    containerColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit,
 ) {
     val stackedSnackbarHostState = rememberStackedSnackbarHostState()
@@ -85,6 +87,7 @@ fun ConnectedDeviceScaffold(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = topBar,
+        containerColor = containerColor,
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             AnimatedVisibility(textInputState.isKeyboardOpen) {
