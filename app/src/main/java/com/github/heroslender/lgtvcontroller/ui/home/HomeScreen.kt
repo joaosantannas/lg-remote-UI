@@ -40,6 +40,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -188,8 +191,12 @@ fun HomeScreen(
 
             AppsCard(
                 apps = uiState.apps,
+                allApps = uiState.allApps,
+                hiddenApps = uiState.hiddenApps,
                 runningApp = uiState.runningApp,
-                openApp = { app -> uiState.launchApp(app.id) }
+                openApp = { app -> uiState.launchApp(app.id) },
+                saveLayout = uiState.saveAppLayout,
+                resetLayout = uiState.resetAppLayout,
             )
 
             InputsCard(
@@ -338,10 +345,57 @@ fun AppsCard(
     apps: List<App>,
     runningApp: String,
     openApp: (App) -> Unit,
+    allApps: List<App> = apps,
+    hiddenApps: Set<String> = emptySet(),
+    saveLayout: (List<String>, Set<String>) -> Unit = { _, _ -> },
+    resetLayout: () -> Unit = {},
 ) {
-    if (apps.isEmpty()) return
+    if (allApps.isEmpty()) return
+    var organizing by rememberSaveable { mutableStateOf(false) }
+
+    if (organizing) {
+        AppOrganizerSheet(
+            apps = allApps,
+            hidden = hiddenApps,
+            onChange = saveLayout,
+            onReset = resetLayout,
+            onDismiss = { organizing = false },
+        )
+    }
+
     Column {
-        SectionHeader(stringResource(string.apps_card_title))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 24.dp),
+        ) {
+            SectionHeader(
+                stringResource(string.apps_card_title),
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                text = stringResource(string.organize_apps),
+                style = MaterialTheme.typography.labelLarge,
+                color = AppColors.Accent,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { organizing = true }
+                    .padding(horizontal = 8.dp, vertical = 2.dp),
+            )
+        }
+
+        if (apps.isEmpty()) {
+            Text(
+                text = stringResource(string.all_apps_hidden),
+                style = MaterialTheme.typography.bodySmall,
+                color = AppColors.ContentSecondary,
+                modifier = Modifier.padding(horizontal = 36.dp),
+            )
+            return@Column
+        }
+
         // Duas fileiras que rolam juntas na horizontal: cada coluna tem 2 apps.
         Row(
             horizontalArrangement = Arrangement.spacedBy(14.dp),

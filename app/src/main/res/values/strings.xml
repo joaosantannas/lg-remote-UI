@@ -54,4 +54,12 @@
     <string name="touchpad_hint_pointer">Drag to move the pointer · Tap to click</string>
     <string name="device_list_title">TVs</string>
     <string name="open_remote">Open remote</string>
+    <string name="organize_apps">Organize</string>
+    <string name="organize_apps_title">Organize apps</string>
+    <string name="organize_apps_hint">Use the arrows to change the order and the switch to show or hide each app.</string>
+    <string name="organize_apps_reset">Reset</string>
+    <string name="organize_apps_done">Done</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="all_apps_hidden">All apps are hidden. Tap Organize to show them again.</string>
 </resources>
