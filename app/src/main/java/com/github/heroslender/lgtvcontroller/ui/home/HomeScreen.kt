@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -341,23 +342,30 @@ fun AppsCard(
     if (apps.isEmpty()) return
     Column {
         SectionHeader(stringResource(string.apps_card_title))
-        LazyRow(
+        // Duas fileiras que rolam juntas na horizontal: cada coluna tem 2 apps.
+        Row(
             horizontalArrangement = Arrangement.spacedBy(14.dp),
-            contentPadding = PaddingValues(horizontal = 20.dp),
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
         ) {
-            items(apps) { app ->
-                Tile(
-                    label = app.name,
-                    selected = app.id == runningApp,
-                    onClick = { openApp(app) },
-                ) {
-                    GlideImage(
-                        model = CustomGlideUrl(app.icon, app.name),
-                        contentDescription = app.name,
-                        modifier = Modifier.fillTile(),
-                        loading = placeholder { TilePlaceholder() },
-                        failure = placeholder { TilePlaceholder() },
-                    )
+            apps.chunked(2).forEach { column ->
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    column.forEach { app ->
+                        Tile(
+                            label = app.name,
+                            selected = app.id == runningApp,
+                            onClick = { openApp(app) },
+                        ) {
+                            GlideImage(
+                                model = CustomGlideUrl(app.icon, app.name),
+                                contentDescription = app.name,
+                                modifier = Modifier.fillTile(),
+                                loading = placeholder { TilePlaceholder() },
+                                failure = placeholder { TilePlaceholder() },
+                            )
+                        }
+                    }
                 }
             }
         }
