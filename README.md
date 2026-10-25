@@ -1,6 +1,6 @@
-<img src=".github/assets/icon.png" alt="LG Remote UI" title="LG Remote UI" align="right" width="120"/>
+<img src=".github/assets/icon.png" alt="LG TV Controller" title="LG TV Controller" align="right" width="120"/>
 
-## LG Remote UI
+## LG TV Controller
 
 [![Build APK](https://github.com/joaosantannas/lg-remote-UI/actions/workflows/build-apk.yml/badge.svg)](https://github.com/joaosantannas/lg-remote-UI/actions/workflows/build-apk.yml)
 [![Último commit](https://img.shields.io/github/last-commit/joaosantannas/lg-remote-UI?label=%C3%BAltimo%20commit)](https://github.com/joaosantannas/lg-remote-UI/commits/main)
