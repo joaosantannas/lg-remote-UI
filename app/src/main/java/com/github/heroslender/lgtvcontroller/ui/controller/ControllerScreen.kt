@@ -439,7 +439,7 @@ private fun SecondaryControls(
     }
 }
 
-/** Fileira inferior: ⏯  ‹ (grande)  📺. */
+/** Fileira inferior: ⏯  ‹ (grande)  📺 . */
 @Composable
 private fun PrimaryButtons(
     has: (DeviceControllerButton) -> Boolean,
