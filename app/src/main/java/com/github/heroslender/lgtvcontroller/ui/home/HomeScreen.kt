@@ -181,6 +181,7 @@ fun HomeScreen(
                 isConnected = uiState.deviceID != null,
                 hasCapability = uiState.hasCapability,
                 executeButton = uiState.executeButton,
+                openHomeApp = uiState.openHomeApp,
                 navigateToController = navigateToController,
             )
 
@@ -215,6 +216,7 @@ fun ControllerShortcutsCard(
     isConnected: Boolean,
     hasCapability: (DeviceControllerButton) -> Boolean,
     executeButton: (DeviceControllerButton) -> Unit,
+    openHomeApp: () -> Unit,
     navigateToController: () -> Unit,
 ) {
     Column(Modifier.padding(horizontal = 20.dp)) {
@@ -289,7 +291,10 @@ fun ControllerShortcutsCard(
                 icon = Icons.Rounded.Home,
                 description = stringResource(string.home_button),
                 enabled = hasCapability(DeviceControllerButton.HOME),
-            ) { executeButton(DeviceControllerButton.HOME) }
+                // Toque = abre o app "TV Sala" · Segurar = Home normal da TV
+                onLongClick = { executeButton(DeviceControllerButton.HOME) },
+                onClick = openHomeApp,
+            )
 
             RemoteCapsule(
                 label = stringResource(string.volume_controls),
@@ -311,10 +316,12 @@ private fun ShortcutButton(
     icon: ImageVector,
     description: String,
     enabled: Boolean,
+    onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
     RemoteCircleButton(
         onClick = onClick,
+        onLongClick = onLongClick,
         size = 48.dp,
         enabled = enabled,
         containerColor = AppColors.Surface,

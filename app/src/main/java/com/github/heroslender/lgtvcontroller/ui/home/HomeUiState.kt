@@ -15,4 +15,6 @@ data class HomeUiState(
     val hasCapability: (DeviceControllerButton) -> Boolean = { false },
     val executeButton: (DeviceControllerButton) -> Unit = {},
     val launchApp: (String) -> Unit = {},
+    /** Botão Home: abre o app "TV Sala" na TV (cai no Home normal se não achar). */
+    val openHomeApp: () -> Unit = {},
 )

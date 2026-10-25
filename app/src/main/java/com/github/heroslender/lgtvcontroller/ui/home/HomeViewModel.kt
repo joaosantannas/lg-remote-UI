@@ -2,6 +2,8 @@ package com.github.heroslender.lgtvcontroller.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.github.heroslender.lgtvcontroller.DeviceManager
+import com.github.heroslender.lgtvcontroller.device.DeviceControllerButton
+import com.github.heroslender.lgtvcontroller.ui.controller.HOME_APP_NAME
 import com.github.heroslender.lgtvcontroller.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,6 +35,11 @@ class HomeViewModel @Inject constructor(
                     hasCapability = device::hasCapability,
                     executeButton = device::executeControllerButton,
                     launchApp = device::launchApp,
+                    openHomeApp = {
+                        device.launchAppByName(HOME_APP_NAME) {
+                            device.executeControllerButton(DeviceControllerButton.HOME)
+                        }
+                    },
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, HomeUiState())
